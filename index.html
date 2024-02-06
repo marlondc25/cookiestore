@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amarah's Sweet Thoughts Cookie Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Amarah's Sweet Thoughts Cookie Store</h1>
+
+    <!-- Order Form -->
+    <form action="order_form.php" method="post" id="orderForm">
+        <label for="customer_name">Customer Name:</label>
+        <input type="text" name="customer_name" required>
+
+        <label for="cookie_type">Cookie Type:</label>
+        <select name="cookie_type" id="cookie_type" onchange="updatePrice()">
+            <option value="original" data-price="60">Original</option>
+            <option value="coffee" data-price="60">Coffee</option>
+            <option value="oatmeal" data-price="70">Oatmeal</option>
+            <option value="red_velvet" data-price="75">Red Velvet</option>
+        </select>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" id="quantity" value="1" required>
+
+        <input type="hidden" name="price" id="price" value="60">
+
+        <button type="submit">Add Order</button>
+    </form>
+
+    <!-- Order Table -->
+    <h2>Orders</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer Name</th>
+            <th>Cookie Type</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Order Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Orders will be displayed here -->
+        </tbody>
+    </table>
+</div>
+
+<script src="script.js"></script>
+<script>
+    // Function to update the price based on the selected cookie type
+    function updatePrice() {
+        var cookieTypeSelect = document.getElementById("cookie_type");
+        var quantityInput = document.getElementById("quantity");
+        var priceInput = document.getElementById("price");
+
+        var selectedOption = cookieTypeSelect.options[cookieTypeSelect.selectedIndex];
+        var price = parseFloat(selectedOption.getAttribute("data-price"));
+        var quantity = parseInt(quantityInput.value);
+
+        var totalPrice = price * quantity;
+        priceInput.value = totalPrice;
+    }
+</script>
+</body>
+</html>
