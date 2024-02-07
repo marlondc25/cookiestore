@@ -20,6 +20,17 @@ body {
     overflow-x: auto;
 }
 
+.orderscontainer {
+    max-width: 1200px; /* Adjust as needed */
+    margin: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Mastery Kingdom', sans-serif;
+    overflow-x: auto;
+    background-color: #fff; /* Initial background color with alpha (transparency) */
+    transition: background-color 0.5s ease; /* Transition effect for background-color property */
+}
+
 button {
     background-color: #4CAF50;
     color: white;
@@ -67,4 +78,20 @@ button:hover {
     color: #333;
     text-decoration: none;
     cursor: pointer;
+}
+#logout-container {
+    position: fixed;
+    bottom: 20px; /* Adjust the distance from the bottom as needed */
+    right: 20px; /* Adjust the distance from the right as needed */
+}
+footer {
+    background-color: /* Add your background color */;
+    padding: /* Add your padding value */;
+    text-align: center;
+}
+
+/* Remove this if not used */
+.credits-footer {
+    font-size: 12px;
+    font-family: 'italic', sans-serif;
 }

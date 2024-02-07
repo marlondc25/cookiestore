@@ -25,12 +25,34 @@ function getOrderDetails($orderId)
     $orderId = mysqli_real_escape_string($conn, $orderId);
     $sql = "SELECT * FROM orders WHERE order_id = $orderId";
     $result = $conn->query($sql);
-    
+
     // Check if the query was successful
     if ($result && $result->num_rows > 0) {
-        return $result->fetch_assoc();
+        // Fetch the order details
+        $orderDetails = $result->fetch_assoc();
+
+        // Include the 'status' field in the response
+        $orderDetails['status'] = getStatusById($orderId);
+
+        return $orderDetails;
     } else {
         return ['error' => 'Order not found'];
+    }
+}
+
+// Function to get the status by order ID
+function getStatusById($orderId)
+{
+    global $conn;
+    $orderId = mysqli_real_escape_string($conn, $orderId);
+    $sql = "SELECT status FROM orders WHERE order_id = $orderId";
+    $result = $conn->query($sql);
+
+    // Check if the query was successful
+    if ($result && $result->num_rows > 0) {
+        return $result->fetch_assoc()['status'];
+    } else {
+        return 'Unknown'; // Set a default status if not found
     }
 }
 

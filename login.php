@@ -1,4 +1,5 @@
 <?php
+
 // Start the session
 session_start();
 
@@ -6,10 +7,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $enteredUsername = $_POST["username"];
     $enteredPassword = $_POST["password"];
 
-    $correctUsername = "admin";
-    $correctPassword = "admin";
+    // Check static credentials
+    $staticCredentials = array(
+        "admin" => "admin",
+        "marlon" => "mdelacruz",
+        "arielle" => "amarah2020"
+    );
 
-    if ($enteredUsername == $correctUsername && $enteredPassword == $correctPassword) {
+    if (array_key_exists($enteredUsername, $staticCredentials) && $enteredPassword == $staticCredentials[$enteredUsername]) {
         // Set the session variable upon successful login
         $_SESSION['username'] = $enteredUsername;
 
@@ -17,6 +22,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: order_form.php");
         exit();
     } else {
+        // Connect to the database
+        $conn = new mysqli("localhost", "root", "", "cookiestore");
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Prepare a SQL statement
+        $stmt = $conn->prepare("SELECT username, password FROM users WHERE username = ?");
+
+        // Bind parameters
+        $stmt->bind_param("s", $enteredUsername);
+
+        // Execute the statement
+        $stmt->execute();
+
+        // Store the result
+        $stmt->store_result();
+
+        // Check if a row was found
+        if ($stmt->num_rows > 0) {
+            // Bind result variables
+            $stmt->bind_result($dbUsername, $dbPassword);
+
+            // Fetch the values
+            $stmt->fetch();
+
+            // Close the statement
+            $stmt->close();
+            $conn->close();
+
+            // Verify the entered password against the hashed password in the database
+            if (password_verify($enteredPassword, $dbPassword)) {
+                // Set the session variable upon successful login
+                $_SESSION['username'] = $enteredUsername;
+
+                // Redirect to order_form.php on successful login
+                header("Location: order_form.php");
+                exit();
+            }
+        }
+
+        // If execution reaches this point, it means the username or password is incorrect
+        // Close the statement and connection
+        $stmt->close();
+        $conn->close();
+
         // Display an improved error message
         echo '<div class="notification">Incorrect username or password. Please try again!</div>';
     }
@@ -48,15 +100,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .developer-name {
             font-weight: bold;
         }
+    
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: url('your-background-image.jpg') center/cover no-repeat; /* Replace 'your-background-image.jpg' with your actual image path */
-        }
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: url('your-background-image.jpg') center/cover no-repeat fixed; /* Replace 'your-background-image.jpg' with the correct relative path */
+}
+
 
         .login-container {
             text-align: center;
@@ -95,7 +149,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <div class="login-container">
-    <h2>Login to Brewed Bliss & Cookie Bits Café</h2>
+    <h2>Login to COFFEE BUDDIES</h2>
+    <div class="tagline">
+        <p>"From Bean to Cup, Pure Coffee Love."</p>
+    </div>
 
     <form action="login.php" method="post">
         <label for="username">Username:</label>
@@ -105,9 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" id="password" name="password" required>
 
         <button type="submit">Login</button>
-        <div class="tagline">
-        <p>"From Bean to Cup, Pure Coffee Love."</p>
-    </div>
+        
 <footer>
     <div class="credits-footer">
         <p>Developed by <span class="developer-name">Marlon Dela Cruz</span></p>
@@ -115,25 +170,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     </footer>
     </form>
-
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $enteredUsername = $_POST["username"];
-        $enteredPassword = $_POST["password"];
-
-        $correctUsername = "admin";
-        $correctPassword = "admin";
-
-        if ($enteredUsername == $correctUsername && $enteredPassword == $correctPassword) {
-            // Redirect to order_form.php on successful login
-            header("Location: order_form.php");
-            exit();
-        } else {
-            // Display an improved error message
-            echo '<div class="notification">Incorrect username or password. Please try again!</div>';
-        }
-    }
-    ?>
 </div>
 
 </body>

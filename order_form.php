@@ -7,6 +7,10 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 include 'db_connect.php';
+
+// Get the username from the session
+$username = $_SESSION['username'];
+
 // Logout functionality
 if (isset($_POST['logout'])) {
     // Unset all of the session variables
@@ -28,22 +32,30 @@ ob_end_flush(); // Flush the output buffer
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
 
 <link href="https://fonts.cdnfonts.com/css/mastery-kingdom" rel="stylesheet">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brewed Bliss & Cookie Bits</title>
+    <title>Coffee Buddies</title>
     <style>
             
+
         
         body {
             font-family: Arial, sans-serif;
-            background: url('your-background-image.jpg') no-repeat center center fixed;
+            background: url('your-background-image2.jpg') no-repeat center center fixed;
             background-size: cover;
             margin: 0;
+            font-family: 'Italic', sans-serif;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: center;
         }
 
         .container {
-            max-width: 800px;
-            margin: 20px auto;
+            max-width: 400px; /* Adjust as needed */
+            margin: 20px;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             font-family: 'Mastery Kingdom', sans-serif;
@@ -52,10 +64,28 @@ ob_end_flush(); // Flush the output buffer
             transition: background-color 0.5s ease; /* Transition effect for background-color property */
         }
 
+        .orderscontainer {
+            max-width: 1200px; /* Adjust as needed */
+            margin: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: 'Mastery Kingdom', sans-serif;
+            overflow-x: auto;
+            background-color: #fff; /* Initial background color with alpha (transparency) */
+            transition: background-color 0.5s ease; /* Transition effect for background-color property */
+        }
+
+        .clear {
+            clear: both;
+        }
+
         .container:hover {
             background-color: rgba(255, 255, 255, 0.5); /* Background color with less alpha on hover */
         }
         
+        .orderscontainer:hover {
+            background-color: rgba(255, 255, 255, 0.5); /* Background color with less alpha on hover */
+        }
 
         button {
             background-color: #4CAF50;
@@ -102,7 +132,7 @@ ob_end_flush(); // Flush the output buffer
         }
 
         .delete-button {
-            background-color: #e74c3c;
+            background-color: #704241;
             color: white;
             border: none;
             padding: 5px 10px;
@@ -116,14 +146,113 @@ ob_end_flush(); // Flush the output buffer
         #orderSearch {
             margin-bottom: 10px;
         }
+        footer {
+            background color:
+            padding: 
+            text-align: center;
+        }
+        .tagline {
+            font-size: 25px;
+            font-family: 'brush script mt';
+        }
+        .credits-footer {
+            font-size: 12px;
+            font-family: 'italic', sans-serif;
+        }
+
+        .developer-name {
+            font-weight: bold;
+        }
+         .status {
+            font-weight: bold;
+            padding: 5px;
+        }
+        .blinking {
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        5% {
+            opacity: 30%;
+        }
+    }
+
+        .paid {
+            color: green;
+        }
+
+        .pending {
+            color: orange;
+        }
+        /* Add this style for the welcome message */
+.welcome-message {
+    font-size: 18px;
+    font-weight: bold;
+    color: 	black; /* Green color, adjust as needed */
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+/* Add this style for the username */
+.logged-in-username {
+    margin-left: 10px;
+}
+/* Calculator icon styles */
+.calculator-icon {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.calculator-icon img {
+    width: 40px; /* Set the width and height according to your icon size */
+}
+
+/* Calculator container styles */
+.calculator-container {
+    position: fixed;
+    top: 50%;
+    left: -300px; /* Initially position it off-screen on the left side */
+    transform: translateY(-50%);
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+}
+
+.calculator-content {
+    padding: 20px;
+}
+
+.calculator-toggle {
+    text-align: center;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    cursor: pointer;
+}
+
 
     </style>
 </head>
 <!--------------------------------------------------------------------------HTML--------------------------------------------------------------------->
 <body>
-<div class="container">
-    <h1>Brewed Bliss & Cookie Bits</h1>
 
+<div class="wrapper">
+        <div class="container">
+            <h1>Coffee Buddies Cafe</h1>
+            <div class="tagline">
+            <p>"Brewed Bliss & Cookie Bits!"</p>
+</div>
+
+            <div class="welcome-message">
+    Our Barista for Today,  <?php echo $username; ?>!
+    <span class="logged-in-username"></span>
+</div>  
 
     <!-- Order Form -->
     <form action="order_form.php" method="post" id="orderForm">
@@ -139,19 +268,49 @@ ob_end_flush(); // Flush the output buffer
             <option value="coffee" data-price="60">Coffee</option>
             <option value="oatmeal" data-price="70">Oatmeal</option>
             <option value="red_velvet" data-price="75">Red Velvet</option>
+            <option value="HOT_Americano" data-price="50">HOT: Coffee Americano</option>
+            <option value="HOT_Latte" data-price="50">HOT: Coffee Latte</option>
+            <option value="ICED_Americano" data-price="60">ICED: Coffee Americano</option>
+            <option value="ICED_Latte" data-price="60">ICED: Coffee Latte</option>
+            <option value="ICED_CoffeeVanilla" data-price="70">ICED: Coffee with Vanilla Syrup</option>
+            <option value="ICED_CoffeeCaramel" data-price="70">ICED: Coffee with Caramel Syrup</option>
+            <option value="ICED_CoffeeHazelnut" data-price="70">ICED: Coffee with Hazelnut Syrup</option>
         </select>
         <label for="price">Total Price:</label>
         <input type="text" name="price" id="price" value="60" readonly>
 
         <button type="submit" name="addOrder" id="addOrderButton" onclick="addOrderAndReload()" >Add Order</button>
-
-
-
-       
-
+     
         
+<div class="credits-footer">
+        <p>Developed by <span class="developer-name">Marlon Dela Cruz</span></p>
+        <p>Contact Us: <span class="developer-name"> +63995 385 6860</span></p>
+            <p>Email: <span class="developer-name"> marlon.dcrodriguez@gmail.com</span></p>
+            <p>&copy; 2024 Brewed Bliss & Cookie Bits Web App</p>
+            <!------------------------------------------------------CALCULATOR--------------------------------------------------------->
+            
+            <div id="calculator-icon" class="calculator-icon" onclick="openWindowsCalculator()">
+        <img src="calculator-icon.png" alt="Calculator Icon">
+    </div>
+
+
+    <!-- Calculator container -->
+    <div id="calculator-container" class="calculator-container">
+        <div id="calculator-content" class="calculator-content">
+            <!-- Calculator content goes here -->
+            <input type="text" id="calc-display" readonly>
+            <!-- ... other calculator buttons and display -->
+        </div>
+        <div id="calculator-toggle" class="calculator-toggle" onclick="toggleCalculator()">Minimize</div>
+    </div>
+
+    <!------------------------------------------------------CALCULATOR--------------------------------------------------------->
+    </div>
 
 </form>
+    </div>
+    <div class="wrapper">
+    <div class="orderscontainer">
 <h2>Search Order:</h2>
 <input type="text" id="orderSearch" placeholder="Search by Order ID" oninput="searchOrders()">
     <h3>Orders</h3>
@@ -165,6 +324,7 @@ ob_end_flush(); // Flush the output buffer
             <th>Price</th>
             <th>Order Date</th>
             <th>Actions</th>
+            <th>Status</th>
         </tr>
         </thead>
         <tbody>
@@ -213,23 +373,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 $sql = "SELECT * FROM orders";
 $result = $conn->query($sql);
+
 if ($result !== false && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         echo "<tr id='orderRow_" . $row["order_id"] . "'>";
         echo "<td>" . $row["order_id"] . "</td>";
         echo "<td>" . $row["customer_name"] . "</td>";
         echo "<td class='flavor-editable'>" . $row["cookie_type"] . "</td>";
-        echo "<td class='quantity-editable'>" . $row["quantity"] . "</td>"; // Make sure to display quantity in the table
+        echo "<td class='quantity-editable'>" . $row["quantity"] . "</td>";
         echo "<td class='price-editable'>" . $row["price"] . "</td>";
         echo "<td>" . $row["order_date"] . "</td>";
         echo "<td class='action-buttons'>";
         echo "<button class='delete-button' onclick='manageOrder(" . $row["order_id"] . ", \"delete\")'>Delete</button>";
+        echo "</td>";
+        echo "<td class='status'>";
+
+        // Add the blinking class for "Unpaid" orders
+        $statusClass = strtolower($row["status"]);
+        if ($statusClass === 'unpaid') {
+            $statusClass .= ' blinking';
+        }
+
+        echo "<button class='status-button $statusClass' onclick='changeStatus(" . $row["order_id"] . ", \"" . $row["status"] . "\")'>" . $row["status"] . "</button>";
         echo "</td>";
         echo "</tr>";
     }
 } else {
     echo "<tr><td colspan='7'>No orders found</td></tr>";
 }
+
 $conn->close();
 ?>
 
@@ -239,6 +411,144 @@ $conn->close();
     <button id="exportExcelButton" onclick="exportToExcel()">Export to Excel</button>
    
     <script>
+
+function changeStatus(orderId, currentStatus) {
+    var statusButton = document.querySelector("#orderRow_" + orderId + " .status-button");
+
+    // Determine the new status based on the current status
+    var newStatus = currentStatus === 'Paid' ? 'Pending' : 'Paid';
+
+    // AJAX request to update the status in the database
+    $.ajax({
+        type: 'POST',
+        url: 'manage_order.php',
+        data: {
+            action: 'changeStatus',
+            order_id: orderId,
+            new_status: newStatus
+        },
+        dataType: 'json',
+        success: function (response) {
+            // Handle the response
+            console.log(response);
+            if (response.status === 'success') {
+                // Update the button appearance based on the new status
+                updateButtonAppearance(statusButton, response.new_status);
+            } else {
+                // Handle errors if needed
+                console.error(response.message);
+            }
+        },
+        error: function (error) {
+            console.error(error);
+            // Handle errors if needed
+        }
+    });
+}
+
+
+
+
+// ===========================================================================================UNPAID BUTTON============================================
+document.addEventListener('DOMContentLoaded', function () {
+    // Simulate the login status (you should replace this with your actual logic)
+    var isLoggedIn = true; // Set to false if not logged in
+  
+    var deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var orderId = button.id.split('_')[1];
+
+            // Show confirmation prompt
+            var isConfirmed = confirm("Are you sure you want to delete this order?");
+
+            if (isConfirmed) {
+                // Call the manageOrder function with 'delete' action
+                manageOrder(orderId, 'delete');
+            }
+        });
+    });
+})
+    // Select all status buttons
+    var statusButtons = document.querySelectorAll('.status-button');
+    statusButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var currentStatus = button.textContent.trim();
+
+    // Set initial appearance based on login status
+    statusButtons.forEach(function (button) {
+        updateButtonAppearance(button, isLoggedIn ? 'Pending' : 'Unpaid');
+    });
+})
+    })
+    // Fetch order statuses from the server and update buttons accordingly
+    function fetchOrderStatuses() {
+    var statusButtons = document.querySelectorAll('.status-button');
+
+    statusButtons.forEach(function (button) {
+        var orderId = button.id.split('_')[1];
+
+        fetch('get_order_details.php?orderId=' + orderId)
+            .then(response => response.json())
+            .then(orderDetails => {
+                if (orderDetails && orderDetails.status) {
+                    updateButtonAppearance(button, orderDetails.status);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching order details:', error);
+            });
+    });
+}
+
+function updateButtonAppearance(button, newStatus) {
+    // Update the button text and class based on the new status
+    button.innerHTML = newStatus;
+    button.classList.remove('blinking', 'pending', 'paid'); // Remove all classes
+    button.classList.add(newStatus.toLowerCase());
+
+    // Add or remove blinking class based on the new status
+    if (newStatus === 'Pending') {
+        button.classList.add('blinking', 'pending');
+    }
+}
+
+
+function fetchOrderStatuses() {
+    // Select all status buttons
+    var statusButtons = document.querySelectorAll('.status-button');
+
+    // Loop through each status button
+    statusButtons.forEach(function (button) {
+        // Extract the order ID from the button's ID
+        var orderId = button.id.split('_')[1];
+
+        // Fetch order details from the server using get_order_details.php
+        $.ajax({
+            type: 'GET',
+            url: 'get_order_details.php',
+            data: { orderId: orderId },
+            dataType: 'json',
+            success: function (orderDetails) {
+                // Update the button appearance based on the actual status from the database
+                if (orderDetails && orderDetails.status) {
+                    updateButtonAppearance(button, orderDetails.status);
+                }
+            },
+            error: function (error) {
+                console.error('Error fetching order details:', error);
+            }
+        });
+    });
+}
+
+// Fetch order statuses when the document is ready
+$(document).ready(function () {
+    fetchOrderStatuses();
+});
+
+// ===========================================================================================UNPAID BUTTON============================================
+
        function enableInlineEdit(orderId) {
     var row = document.getElementById('orderRow_' + orderId);
 
@@ -517,14 +827,30 @@ function closeStore() {
         console.log("Store closure canceled by user.");
     }
 }
+function openWindowsCalculator() {
+            // Open Windows Calculator using a custom protocol
+            window.location.href = "calculator://";
+        }
 
+        function toggleCalculator() {
+            var calculatorContainer = document.getElementById("calculator-container");
+            var calculatorToggle = document.getElementById("calculator-toggle");
 
+            if (calculatorContainer.style.display === "none" || calculatorContainer.style.display === "") {
+                calculatorContainer.style.display = "block";
+                calculatorToggle.innerText = "Minimize";
+            } else {
+                calculatorContainer.style.display = "none";
+                calculatorToggle.innerText = "Open Calculator";
+            }
+        }
 </script>
-<form method="post" action="">
+<!-- Add this container at the end of your body -->
+<div id="logout-container">
+    <form method="post" action="">
         <input type="submit" name="logout" value="Logout">
     </form>
-
-
+</div>
     
 </div>
 </body>

@@ -17,41 +17,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && isset($_P
         }
 
         $stmt->close();
-    } elseif ($action === 'edit') {
-        $new_quantity = $_POST['new_quantity'];
-        $new_cookie_type = $_POST['new_cookie_type'];
+    } elseif ($action === 'changeStatus') {
 
-        // Retrieve the unit price based on the selected cookie type
-        $unitPriceSql = "SELECT price FROM cookie_prices WHERE cookie_type = ?";
-        $unitPriceStmt = $conn->prepare($unitPriceSql);
-        $unitPriceStmt->bind_param("s", $new_cookie_type);
-        $unitPriceStmt->execute();
-        $unitPriceResult = $unitPriceStmt->get_result();
+        $newStatus = $_POST['new_status'];
 
-        if ($unitPriceResult->num_rows > 0) {
-            $row = $unitPriceResult->fetch_assoc();
-            $unitPrice = $row['price'];
+        // Update the order with the new status
+        $updateStatusSql = "UPDATE orders SET status = ? WHERE order_id = ?";
+        $updateStatusStmt = $conn->prepare($updateStatusSql);
+        $updateStatusStmt->bind_param("si", $newStatus, $order_id);
 
-            // Calculate the new price
-            $new_price = $new_quantity * $unitPrice;
-
-            // Update the order with new quantity, cookie type, and price
-            $updateSql = "UPDATE orders SET quantity = ?, cookie_type = ?, price = ? WHERE order_id = ?";
-            $updateStmt = $conn->prepare($updateSql);
-            $updateStmt->bind_param("isdi", $new_quantity, $new_cookie_type, $new_price, $order_id);
-
-            if ($updateStmt->execute()) {
-                echo json_encode(["status" => 'success', "message" => 'Order updated successfully', "new_price" => $new_price]);
-            } else {
-                echo json_encode(["status" => 'error', "message" => 'Error updating order: ' . $updateStmt->error]);
-            }
-            $updateStmt->close();
+        if ($updateStatusStmt->execute()) {
+            echo json_encode(["status" => 'success', "message" => 'Status updated successfully', "new_status" => $newStatus]);
         } else {
-            echo json_encode(["status" => 'error', "message" => 'Invalid cookie type']);
+            echo json_encode(["status" => 'error', "message" => 'Error updating status: ' . $updateStatusStmt->error]);
         }
-
-        $unitPriceStmt->close();
-    } else {
+        $updateStatusStmt->close();
+    
+     } else {
         echo json_encode(["status" => "error", "message" => "Invalid action"]);
     }
 } else {
@@ -59,11 +41,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && isset($_P
 }
 
 $conn->close();
-
-function getPriceByCookieType($cookie_type) {
-    // Implement your logic to retrieve the price based on cookie type
-    // For now, assuming you have this function elsewhere in your code
-    // You may replace this with your actual logic
-    return 60; // Default price for demonstration purposes
-}
 ?>
